@@ -34,7 +34,7 @@ self.addEventListener('fetch', (event) => {
         return response;
       });
     }).catch((err) => {
-      console.error(err);
+      //console.error(err);
       return caches.match('index.html');
     })
   );
