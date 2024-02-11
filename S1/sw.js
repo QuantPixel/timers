@@ -31,10 +31,8 @@ self.addEventListener('activate', async event => {
     console.log('Service worker has been activated');
 });
 
-self.addEventListener('fetch', event => {
-    console.log(`Trying to fetch ${event.request.url}`);
-    event.respondWith(caches.match(event.request).then(cachedResponse => {
-        return cachedResponse || fetch(event.request)
-    }));
+
+self.addEventListener('fetch', (event) => {
+  console.log('fetch');
 });
 
