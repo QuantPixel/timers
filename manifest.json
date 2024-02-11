@@ -22,8 +22,7 @@
       "purpose": "maskable"
     }
   ],
-  "start_url": "https://quantpixel.github.io/timers/",
-  "scope": "https://quantpixel.github.io/timers/",
+  "start_url": ".",
   "background_color": "#008184",
   "display": "standalone",
   "theme_color": "#008184",
