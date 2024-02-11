@@ -5,12 +5,12 @@ const appFiles = [
     './index.html',
     './images/favicon.ico',
     './images/icon-192.png',
-	'./images/icon-512.png",
-	'./images/icon-192-maskable.png",
-	'./images/icon-512-maskable.png",
-	'./fonts/Barlow.woff2",
-	'./fonts/Lato-Regular.woff2",
-	'./function.js",
+	'./images/icon-512.png',
+	'./images/icon-192-maskable.png',
+	'./images/icon-512-maskable.png',
+	'./fonts/Barlow.woff2',
+	'./fonts/Lato-Regular.woff2',
+	'./function.js',
     './style.css',
     './app.js'
 ];
