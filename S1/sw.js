@@ -11,8 +11,7 @@ const staticAssets = [
     './offline.html',
     './css/main.css',
     './js/app.js',
-    './js/main.js',
-    './images/no-image.jpg'
+    './js/main.js'
 ];
 
 self.addEventListener('install', async event => {
