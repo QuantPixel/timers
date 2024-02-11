@@ -32,7 +32,8 @@ self.addEventListener('activate', async event => {
 });
 
 
-self.addEventListener('fetch', (event) => {
-  console.log('fetch');
+self.addEventListener('fetch', event => {
+    console.log(`Trying to fetch ${event.request.url}`);
+    event.respondWith(checkCache(event.request));
 });
 
