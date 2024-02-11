@@ -23,7 +23,7 @@ self.addEventListener('install', async event => {
 self.addEventListener('activate', async event => {
     const cachesKeys = await caches.keys();
     const checkKeys = cachesKeys.map(async key => {
-        if (![staticCacheName, dynamicCacheName].includes(key)) {
+        if (staticCacheName != key) {
             await caches.delete(key);
         }
     });
@@ -33,6 +33,8 @@ self.addEventListener('activate', async event => {
 
 self.addEventListener('fetch', event => {
     console.log(`Trying to fetch ${event.request.url}`);
-    event.respondWith(checkCache(event.request));
+    event.respondWith(cache.match(event.request).then(cachedResponse => {
+        return cachedResponse || fetch(event.request)
+    }));
 });
 
