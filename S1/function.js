@@ -662,10 +662,10 @@
 	function StorWrite() 
 	{
 		localStorage.clear();
-		localStorage.setItem('bm','m15.cloudmqtt.com');
-		localStorage.setItem('us','cxjuzzzn');
-		localStorage.setItem('ps','Jevkda5wZkhl');
-		localStorage.setItem('po','32669');
+		localStorage.setItem();
+		localStorage.setItem();
+		localStorage.setItem();
+		localStorage.setItem();
 	}
 	
 	//Функция чтения значений хранилища из смартфона или компа
