@@ -24,7 +24,7 @@ self.addEventListener('install', async event => {
 self.addEventListener('activate', async event => {
     const cachesKeys = await caches.keys();
     const checkKeys = cachesKeys.map(async key => {
-        if (![staticCacheName, dynamicCacheName].includes(key)) {
+        if (![staticCacheName].includes(key)) {
             await caches.delete(key);
         }
     });
