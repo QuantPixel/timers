@@ -5,8 +5,10 @@ const dynamicCacheName = 'dynamic-cache-v1';
 const staticAssets = [
     './',
     './index.html',
-    './images/icons/icon-128x128.png',
-    './images/icons/icon-192x192.png',
+    './images/icon-192.png',
+    './images/icon-512.png',
+    './images/icon-192-maskable.png',
+    './images/icon-512-maskable.png',
     './offline.html',
     './css/main.css',
     './js/app.js',
