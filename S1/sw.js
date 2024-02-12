@@ -1,4 +1,4 @@
-const cacheName = 'cache-v1';
+const cacheName = 'cache-v2';
 
 const cacheFiles = [
     "index.html",
@@ -7,8 +7,8 @@ const cacheFiles = [
     "images/icon-192-maskable.png",
     "images/icon-512-maskable.png",
     "fonts/Barlow.woff2",
-	"fonts/Lato-Regular.woff2",
-	"mqttws31.js",
+    "fonts/Lato-Regular.woff2",
+    "mqttws31.js",
     "style.css",
     "app.js"
 ];
