@@ -27,16 +27,24 @@
 		<div class="sPanel">
 			<div id="btNaza" class="nazad" style="display:none; "onclick="btNazad()"></div>
 			<p id="pText" class="txtLink" style=" width: 50px; ">LINK BLE</p>
-			<div id="ledDev" class="liLed"></div>
-			<p id="pText" class="txtLink" style=" width: 55px; ">LINK MQTT</p>
-			<div id="ledMqt" class="liLed" style=" margin-left: 2px; " ></div>
+			<div id="ledDev" class="liLed" style=" margin-left: 2px;" ></div>
+			<p id="pText" class="txtLink" style=" width: 30px; ">MQDV</p>
+			<div id="ledD" class="liLed" style=" margin-left: 2px;" ></div>
+			<p id="pText" class="txtLink" style=" width: 30px; ">MQGL</p>
+			<div id="ledG" class="liLed" style=" margin-left: 2px;" ></div>
 			<div style="flex:1;"></div>	
-			<div id="updTim" class="uptim" onclick="updTim()"></div>
+			<div id="conGlob" class="globl" onclick="conGlobal()"></div>
 			<div id="conBle" class="bleOf" onclick="bleOnOff()"></div>
 			<div id="conWiFi" class="wifi" onclick="menuWf()"></div>
 		
 		</div>	
-		<p id="infoT" class="lbTime" style="margin-top:5px;">MO 12:45</p>
+		<div style="display: flex;justify-content: center;align-items: center;height:30px;">
+			<div style="width: 40px;height:100%;"></div>
+			<p id="datim" class="lbTime" style="flex:1;">MO 12:45</p>
+			<div style="width: 35px;height:100%;margin-right: 4px;">
+				<div id="updTim" class="uptim" onclick="updTim()"></div>
+			</div>
+		</div>
 		
 		<!-- PAGE PANEL -->
 	
@@ -51,11 +59,11 @@
 							<circle cx="50%" cy="50%" r="20" style="--percent"></circle>
 						</svg>
 						<div class="dvnx">
-							<p class="ntxt">70</p>
+							<p id="temp" class="ntxt">--</p>
 							<span class="grad">°C</span>
 						</div>
 					</div>
-					<p class="lbMenu" style="margin-top:0px;">SET TIMERS PAGE</p>
+					<p id="lbTim" class="lbMenu" style="margin-top:0px;">SETTING THE DAY TIMER</p>
 					<div id="btTim" class="tisut" onclick="btSetTim()"></div>
 					<div style=" flex:1;height:100%;"></div>
 					<p id="txHaAu" class="lbMenu" style="margin-top: auto;margin-bottom:14px;">HAND MODE</p>
@@ -67,176 +75,210 @@
 			<!-- DISPLAY SETING TIMERS -->
 			<div id="blSetT" style="display:none; height:100%;">	
 			
-				<div  style=" display: flex; flex-direction: column;justify-content: flex-start; margin-bottom:25px;height:100%;">
-					
-					<div class="dispStat" style="height: 100%;padding-top: 2px;padding-left: 2px; padding-bottom: 2px;padding-right: 2px;">
-						<table id="table" class="tabT" >
-							<tr>
-							  <td id="tn0" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn1" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn2" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn3" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn4" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn5" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							</tr>
-							<tr>
-							  <td id="tn6" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn7" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn8" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn9" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn10" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn11" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							</tr>
-							<tr>
-							  <td id="tn12" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn13" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn14" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn15" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn16" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn17" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							</tr>
-							<tr>
-							  <td id="tn18" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn19" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn20" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn21" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn22" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn23" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							</tr>
-							<tr>
-							  <td id="tn24" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn25" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn26" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn27" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn28" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn29" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							</tr>
-							<tr>
-							  <td id="tn30" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn31" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn32" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn33" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn34" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn35" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							</tr>
-							<tr>
-							  <td id="tn36" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn37" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn38" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn39" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn40" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn41" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							</tr>
-							<tr>
-							  <td id="tn42" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn43" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn44" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn45" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn46" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn47" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							</tr>
-							<tr>
-							  <td id="tn48" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn49" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn50" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn51" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn52" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn53" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							</tr>
-							<tr>
-							  <td id="tn54" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn55" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn56" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn57" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn58" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							  <td id="tn59" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
-							</tr>
-						</table>
-					</div>	
+				<div  style=" display: flex; flex-direction: column;justify-content: flex-start; height:100%;">
+					<div style="height: 100%;display: flex;align-items: center;justify-content: center;">
+						<div class="dispStat" style="height: 100%;padding: 2px;flex:1;">
+							<table id="table" class="tabT" >
+								<tr>
+								  <td id="tn0" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn1" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn2" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn3" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn4" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn5" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn6" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn7" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn8" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn9" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn10" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn11" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn12" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn13" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn14" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn15" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn16" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn17" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn18" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn19" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn20" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn21" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn22" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn23" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn24" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn25" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn26" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn27" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn28" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn29" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn30" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn31" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn32" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn33" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn34" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn35" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn36" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn37" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn38" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn39" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn40" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn41" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn42" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn43" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn44" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn45" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn46" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn47" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn48" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn49" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn50" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn51" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn52" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn53" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn54" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn55" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn56" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn57" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn58" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn59" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn60" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn61" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn62" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn63" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn64" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn65" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn66" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn67" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn68" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn69" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn70" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn71" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn72" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn73" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn74" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn75" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn76" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn77" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn78" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn79" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn80" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn81" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn82" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn83" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn84" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn85" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn86" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn87" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn88" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn89" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn90" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn91" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+								<tr>
+								  <td id="tn92" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn93" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn94" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								  <td id="tn95" class="celT" onmousedown="chColor(this)" onmouseover="pPres(this)"></td>
+								</tr>
+							</table>
+						</div>	
+						
+						<!-- Кнопки навигации -->
+						
+						<div class="dispStat" style="padding:6px;height: 100%;width:clamp(1.875rem, 1.161rem + 3.571vw, 2.5rem);margin-left:3px;display: flex; flex-direction: column;justify-content: center;">
+							<div style="height: 100%;flex:1;"></div>
+							<div id="btTiTe" class="tinoT" onclick="btTiTemp()"></div>
+							<div id="btCoHe" class="tmpCo" onclick="btColHea()"></div>
+							<div id="btSell" class="deSel" onclick="btDeSele()"></div>
+							<div id="btSuNe" class="nedTi" onclick="btSutNed()"></div>
+							<div id="btSave" class="savSi" onclick="saveSetTimers()"></div>
+							<div style="height: 100%;flex:1;"></div>
+						</div>
+					</div>
 					
 					<!-- Дни недели -->
 					
-					<div class="btHouDv">
-						<div class="btWeek" onclick="btWeekClick(0)">MO</div>
-						<div class="btWeek" onclick="btWeekClick(1)">TU</div>
-						<div class="btWeek" onclick="btWeekClick(2)">WE</div>
-						<div class="btWeek" onclick="btWeekClick(3)">TH</div>
-						<div class="btWeek" onclick="btWeekClick(4)">FR</div>
-						<div class="btWeek" onclick="btWeekClick(5)">SA</div>
-						<div class="btWeek" onclick="btWeekClick(6)">SU</div>
+					<div id="dvDnNd" style="display: block; margin-bottom: 10px;height: 20px;margin-top: 7px;">
+						<div class="btHouDv">
+							<div class="btWeek" onclick="btWeekClick(0)">MO</div>
+							<div class="btWeek" onclick="btWeekClick(1)">TU</div>
+							<div class="btWeek" onclick="btWeekClick(2)">WE</div>
+							<div class="btWeek" onclick="btWeekClick(3)">TH</div>
+							<div class="btWeek" onclick="btWeekClick(4)">FR</div>
+							<div class="btWeek" onclick="btWeekClick(5)">SA</div>
+							<div class="btWeek" onclick="btWeekClick(6)">SU</div>
+						</div>
 					</div>
+		
+					<!-- Блок ползунок установки температуры-->
 					
-					<!-- Первая строка переключателей часов-->
-					
-					<div class="btHouDv">
-						<div class="btHou" onclick="btHouClick(0)">00</div>
-						<div class="btHou" onclick="btHouClick(1)">01</div>
-						<div class="btHou" onclick="btHouClick(2)">02</div>
-						<div class="btHou" onclick="btHouClick(3)">03</div>
-						<div class="btHou" onclick="btHouClick(4)">04</div>
-						<div class="btHou" onclick="btHouClick(5)">05</div>
-						<div class="btHou" onclick="btHouClick(6)">06</div>
-						<div class="btHou" onclick="btHouClick(7)">07</div>
-						<div class="btHou" onclick="btHouClick(8)">08</div>
-						<div class="btHou" onclick="btHouClick(9)">19</div>
-						<div class="btHou" onclick="btHouClick(10)">10</div>
-						<div class="btHou" onclick="btHouClick(11)">11</div>
-					</div>
-
-					
-					<!-- Вторая строка переключателей часов -->
-					
-					<div class="btHouDv">
-						<div class="btHou" onclick="btHouClick(12)">12</div>
-						<div class="btHou" onclick="btHouClick(13)">13</div>
-						<div class="btHou" onclick="btHouClick(14)">14</div>
-						<div class="btHou" onclick="btHouClick(15)">15</div>
-						<div class="btHou" onclick="btHouClick(16)">16</div>
-						<div class="btHou" onclick="btHouClick(17)">17</div>
-						<div class="btHou" onclick="btHouClick(18)">18</div>
-						<div class="btHou" onclick="btHouClick(19)">29</div>
-						<div class="btHou" onclick="btHouClick(20)">20</div>
-						<div class="btHou" onclick="btHouClick(21)">21</div>
-						<div class="btHou" onclick="btHouClick(22)">22</div>
-						<div class="btHou" onclick="btHouClick(23)">23</div>
-					</div>
-				
-					<!-- Кнопки режимов -->
-					
-					<div style="display: flex; gap: 5px;  margin-top: 5px; height: 25px;">
-						<div id="btTiTe" class="btFiks" style="flex:1;" onclick="btTiTemp()">TIMER</div>
-						<div id="btCoHe" class="btFiks" style="flex:1;" onclick="btColHea()">COLD MODE</div>
-						
-					</div>
-					
-					<p class="lbMenu" style="margin-top:10px;">SET TEMPERATURE</p>
-						<div style="display: flex; margin-top:-6px;width: 100%;justify-content: center;align-items: center;margin-bottom:40px;">
-							<div class="dTxtSlid">
-								<p id="labTR5">--</p>
+					<div style="margin-top:7px;width: 100%;height: 40px;margin-bottom:20px;">
+						<div id="dvTrTem" style="display: none; width: 100%;height: 100%;">
+							<p class="lbMenu">SET TEMPERATURE</p>
+							<div style="display: flex; margin-top:-6px;width: 100%;justify-content: center;align-items: center;">
+									<div class="dTxtSlid">
+										<p id="labTe">--</p>
+									</div>
+									<p class="lbMenu" style="width: 30px;">10°</p>
+									<div style=" flex: 1; margin-right: 4px;">
+										<input id="slidT"  oninput="SetSlidT(this.value)"  class="slider" onMouseUp="SaveDevSet()" type="range" min="10" max="100" step="1" value="10">
+										<div class="rec" id="prTemp"></div>
+									</div>
+									<p class="lbMenu" style="width: 30px;">100°</p>
 							</div>
-							<p class="lbMenu" style="width: 30px;">10°</p>
-							<div style=" flex: 1; margin-right: 4px;">
-								<input id="slidTR5"  oninput="SetSlidTR5(this.value)"  class="slider" onMouseUp="SaveDevSet()" type="range" min="10" max="100" step="1" value="10">
-								<div class="rec" id="prTeR5"></div>
-							</div>
-							<p class="lbMenu" style="width: 30px;">100°</p>
+						</div>
 					</div>
 					
-					<!-- Кнопки навигации -->
-					
-					<div style="display: flex; justify-content: center;  gap: 25px; align-items: center;  margin-top: auto;margin-bottom:10px;height: 25px;">
-						<div id="btSetT" class="tmpCo" onclick="btSetTe()"></div>
-						<div id="btSell" class="selAl" onclick="btSelAl()"></div>
-						<div id="btDese" class="deSel" onclick="btDeSel()"></div>
-						<div id="btSave" class="savSi" onclick="saveSetTimers()"></div>
-					</div>
 				</div>
 			</div>
 						
 			<!-- !!!!!!!! WI-FI SETTINGS -->
 		
 			<div id="blSetW" style="display:none; ">
-				<div class="dispStat" style="padding-left: 2px;padding-right: 2px;padding-bottom: 2px;display: flex; flex-direction: column;justify-content: flex-start; height: 219px; ">
+				<div class="dispStat" style="padding: 2px;display: flex; flex-direction: column;justify-content: flex-start; height: 219px; ">
 		
 					<p id="locIPT" style="margin-top: 12px;text-align:center; " class="lbMenu">NO CONNECTION TO ROUTER</p>
 				
@@ -325,8 +367,8 @@
 			</div>
 		</div>
 	</div>
-
-	<!--<script src="app.js"></script>-->
+	
 	<script src="app.js"></script>
+	
 	</body>
 </html>
