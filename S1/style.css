@@ -92,7 +92,7 @@ word-spacing: 2px;
 /*Лабел текста часов*/
 .lbTime {
 color: #8f9392; /*Светлосерый цвет текста */
-font-size: clamp(0.5rem, 0.071rem + 2.143vw, 0.875rem);
+font-size: clamp(0.875rem, 0.732rem + 0.714vw, 1rem);
 text-shadow: #3D3D3D 1px 1px 0px;
 text-align:center;
 word-spacing: 2px;
