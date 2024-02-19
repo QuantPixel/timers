@@ -1,18 +1,23 @@
 	var count = 0;
 	var couRou = 0;
 	var flg_Conn = 0;
+	var Flag_Read = 0;
+	var readData = "";
 	var link_open = 0;
 	var flagDel = 0;
+	var flagTimerTemp = 0;
 	var copIP = "";
 	var updTm = 0;
 	var jeso;
 	var flagDialog = 0;
 	var st = [];
 	var timer = [];
+	var selCell = []; // Массив для хранения индексов ячеек
 	var draw = false;
 	var t_hou = 0;
 	var t_min = 0;
-	var t_tmp = 170;
+	var t_tmp = 0;
+	var d_ned = 0;
 	var host = "";
 	var UsernameServer = "";
 	var PasswordServer = "";
@@ -24,6 +29,7 @@
 	var deviceName ='ESP32';
     var bleService = '70b768c5-9033-48b0-abb0-cbeee7d466ad';
     var jsonCharact = 'd1135308-a467-48a5-8e5f-47ef971f519d';
+	var mqtt;
 	
 	window.addEventListener('load', onLoad);
 	
@@ -31,23 +37,24 @@
 	function onLoad(event) 
 	{
 		regServiWork();
-		//startConnect();
-		startTime();
-		if (localStorage.getItem('bm') === null ) StorWrite();
-		else StorRead();
-		btHouClick(t_hou); //Устанавливаем кнопку переключателей на 00 часов
-		timDisp(t_hou);
 		
-		const progressCircle = document.querySelector('.prog circle:last-of-type');
-		var x = 77;
-        progressCircle.style.setProperty('--percent', x); 
+		startTime();
+		//if (localStorage.getItem('bm') === null ) StorWrite();
+		//else StorRead();
+		//btHouClick(t_hou); //Устанавливаем кнопку переключателей на 00 часов
+		timDisp();
+		//conGlobal();
+		for (var i = 0; i < 96; i++) {
+			timer[i] = Math.floor(Math.random() * 101);								//Температуру во все ячейки
+		}
 	}
 	
+	//функция регистрации Service worker
 	function regServiWork() 
 	{
 		if ('serviceWorker' in navigator){
 
-			navigator.serviceWorker.register('./sw.js')
+			navigator.serviceWorker.register('sw.js')
 				.then(registration => {
 					console.log('Service worker successfully registered', registration);
 			})
@@ -57,45 +64,47 @@
 		}
 	}
 	
-	function startConnect()
-	{
-		var id = new Date().getTime().toString();
-		var clientID = "Web_" + id.substring(id.length - 10);
-		client = new Paho.MQTT.Client(host, Number(port), clientID);
-
-		client.onConnectionLost = onConnectionLost;
-		client.onMessageArrived = onMessageArrived;
+	function conGlobal() {
+	StorRead();
+		var e = (new Date).getTime().toString();
+		t = "Web_" + e.substring(e.length - 10);
+		mqtt = new Paho.MQTT.Client(host, Number(port), t);
+		mqtt.onConnectionLost = onConnectionLost;
+		mqtt.onMessageArrived = onMessageArrived;
 		
-		client.connect({
-		onSuccess: onConnect, 
-		userName : UsernameServer,
-		useSSL: true,
-		password : PasswordServer });
-		console.log("START CONNECT...");
-		console.log(clientID);
+		var options = {
+			onSuccess: onConnect,
+			userName: UsernameServer,
+			useSSL: true,
+			password: PasswordServer
+		};
+		
+		console.log("START CONNECT..."),
+		console.log(t)
+		mqtt.connect(options);
 	}
-	
+
 	function sendData(mess)
 	{
-		if (flg_Conn == 1)
+		if (flg_Conn == 2)
 		{	
 			var message = new Paho.MQTT.Message(mess);
 			message.destinationName = DeviceCode+"/Control";
 			message.qos = 0;
-			client.send(message);
+			mqtt.send(message);
 		}	
 	}
 	
 	function onConnect() 
 	{
 		var tpd = DeviceCode+"/Data";
-		client.subscribe(tpd);
-		document.getElementById("ledL").style.color = '#24A9A3';
+		mqtt.subscribe(tpd);
+		document.getElementById("ledG").style.backgroundColor = "#34CB98"; //Зеленый цвет светодиода LINK Global MQTT
 		jeso = '{'
 		+ '"comm":'
 		+ '"PWS"'
 		+ '}';
-		flg_Conn = 1;
+		flg_Conn = 2;
 		sendData(jeso);
 		console.log("Connect!");
 	}
@@ -104,38 +113,73 @@
 	{
 		flg_Conn = 0;
 		console.log("NO Connect!");
+		document.getElementById("ledG").style.backgroundColor = '#EE566F'; //Красный цвет светодиода LINK Global MQTT
 	}
 
 	function onMessageArrived(message) 
 	{
-		var jsonResponse = JSON.parse(message.payloadString);
+		var jsonResp = JSON.parse(message.payloadString);
+		parsePaket(jsonResp);
 	}
 	
 	
-	function parsePaket() 
+	function parsePaket(paket) 
 	{
 		//console.log("Hello world!");
 		
 		var x;
 		var y;
 		var z;
-	  
-		//jsonResponse = JSON.parse(event.data);
+		var w;
+		const progressCircle = document.querySelector('.prog circle:last-of-type');
+		
+		var jsonResponse = JSON.parse(paket);
+		
+		y = jsonResponse.x1;
+		if (y != -127.0) {
+              document.getElementById("temp").innerHTML = y;
+			  progressCircle.style.setProperty('--percent', Number(y)); 
+        }else {
+              document.getElementById("temp").innerHTML = "--";
+			  progressCircle.style.setProperty('--percent', 0); 
+        }
+		
+		curWeek = jsonResponse.x3; 			//Текущий день недели
+		switch (curWeek) //День недели
+		{
+			case 0: w = 'SUNDAY'; break;
+			case 1: w = 'MONDAY'; break;
+			case 2: w = 'TUESDAY'; break;
+			case 3: w = 'WEDNESDAY'; break;
+			case 4: w = 'THURSTDAY'; break;
+			case 5: w = 'FRIDAY'; break;
+			case 6: w = 'SATURDAY'; break
+		}
+		
+		y = Number(jsonResponse.x8); 			//Часы в секундах
+		var inHou = y /3600 ^ 0;				//Час
+		var inMin = (y-inHou * 3600) /60 ^ 0; 	//Минуты
+		document.getElementById("datim").innerHTML = w + " " + (inHou<10 ? "0" + inHou:inHou) + ":" + (inMin<10 ? "0" + inMin:inMin);
 		
 		y = jsonResponse.x7; //Если нулевой бит в 1 - то MQTT подключен
 		if (y & (1 << 0))
 		{
-			document.getElementById("ledMqt").style.backgroundColor = "#34CB98"; //Зеленый цвет светодиода LINK MQTT 
+			document.getElementById("ledD").style.backgroundColor = "#34CB98"; //Зеленый цвет светодиода LINK MQTT 
 		} 
-		else document.getElementById("ledMqt").style.backgroundColor = "#40414D"; //Немного светлее Цвета фона светодиода LINK MQTT
+		else document.getElementById("ledD").style.backgroundColor = "#40414D"; //Немного светлее Цвета фона светодиода LINK MQTT
 	  
 		if (y & (1 << 1)) //Если первый бит 1 - то Обновление настроек WIFI
 		{
-			//document.getElementById("snA").innerHTML = "S/N " + jsonResponse.x17;  //Серийный номер
+			host = jsonResponse.x22;
+			UsernameServer = jsonResponse.x23;
+			PasswordServer = jsonResponse.x24;
+			port = jsonResponse.x25;
+			
+			//document.getElementById("snA").innerHTML = "S/N " + jsonResponse.x17;  	//Серийный номер
 			if (jsonResponse.x18 === "") document.getElementById("nameNet").innerHTML = "SELECT WI-FI NETWORK"; //Имя сети
 			else {document.getElementById("nameNet").innerHTML = jsonResponse.x18; flagDel = 1;} //Флаг что сеть была сохранена и можно удалять
-			document.getElementById("passNet").value = jsonResponse.x19; //Пароль сети
-			document.getElementById("ver").innerHTML = jsonResponse.x21; //Версия ПО
+			document.getElementById("passNet").value = jsonResponse.x19;   //Пароль сети
+			//document.getElementById("ver").innerHTML = jsonResponse.x21; //Версия ПО
 		
 			x = jsonResponse.x6; //Флаг подключения к роутеру
 			if (x == 0 || x == 5) {
@@ -152,7 +196,7 @@
 			{
 				z = jsonResponse.x12;
 				document.getElementById("locIPT").innerHTML = "CONNECT - " + document.getElementById("nameNet").innerHTML + " - " + "LOCAL IP " + z;
-				//document.getElementById("locIPT").style.color = '#8f9392'; //Светлосерый цвет
+				//document.getElementById("locIPT").style.color = '#8f9392'; 			//Светлосерый цвет
 				copIP = z;
 				couRou = 0;
 			}
@@ -214,11 +258,10 @@
 			}
 			else {
 				document.getElementById("ledDev").style.backgroundColor = "#40414D"; //Немного светлее Цвета фона светодиода LINK DEV
-				document.getElementById("ledMqt").style.backgroundColor = "#40414D"; //Немного светлее Цвета фона светодиода LINK MQTT
 				count = 0;
 			}
 		}
-		else
+		if (flg_Conn == 1)
 		{
 			if (count == 0) {
 				document.getElementById("ledDev").style.backgroundColor = "#34CB98"; //Зеленый цвет светодиода LINK DEV
@@ -295,15 +338,6 @@
 		hideBlok();
 		document.getElementById("btNaza").style.display = "none";  //Скрываем кнопку назад
 		document.getElementById("blMain").style.display = "block"; //Показываем Div Setings Timer
-	}
-	
-	//Функция обработки трекбара установки MAX TEMPERATURE
-	function SetSlidTR5(t5) 
-	{
-		document.getElementById("labTR5").innerHTML = t5 + "\xB0"; //Знак градуса '\xB0'
-		var pr = document.getElementById("prTeR5");
-		var x = (t5-10)/(100-10)*100;
-		pr.style.width = x + "%";
 	}
 	
 	//Функция функция сохранения значений трэкбаров
@@ -417,7 +451,7 @@
 		+ '"comm":'
 		+ '"DLR"'
 		+ '}';
-		websocket.send(jeso);
+		sendData(jeso);
 		flagDel = 0; //Збрасываем флаг от повторного нажатия на корзину
 		flagDialog = 0;
 	}
@@ -457,7 +491,7 @@
 		+ '"pasr":'
 		+ '"'+ document.getElementById("passNet").value + '"'
 		+ '}';
-		websocket.send(jeso);
+		sendData(jeso);
 		//document.getElementById("btSav").style.color = '#BABDB6'; //Серый цвет
 	}
 	
@@ -478,7 +512,7 @@
 		+ '"comm":'
 		+ '"UPN"'
 		+ '}';
-		websocket.send(jeso);
+		sendData(jeso);
 	}
 	
 	//Функция показать / скрыть пароль
@@ -504,22 +538,23 @@
 	});
 
 	//Функция обработки кнопок выделения времени в таблице таймеров
-	function timDisp(h) 
+	function timDisp() 
 	{
 		var xh;
 		var xm;
 		
-		for (var n = 0; n < 60; n++) 
+		for (var n = 0; n < 96; n++) 
 		{
 			t_min = n;
-			t_hou = h;
+			t_hou = 0;
+			t_tmp = (timer[n] >> 0) & 0x1FF; //Считываем температуру с младших 9 бит
 			if (t_hou < 10) xh = "0" + t_hou;
 			else xh = t_hou;
 			
 			if (t_min < 10) xm = "0" + t_min;
 			else xm = t_min;
-			
-			document.getElementById("tn"+n).innerHTML = t_tmp + "° " + xh + ":" + xm;
+			if (timer[n] & (1 << 11)) document.getElementById("tn"+n).innerHTML = xh + ":" + xm + " " + t_tmp + "°";
+			else document.getElementById("tn"+n).innerHTML = xh + ":" + xm;
 		}
 	}
 	//Функция обработки кнопок выделения времени в таблице таймеров
@@ -531,99 +566,233 @@
 		}
 	}
 
-	//Функция обработки кнопок выделения времени в таблице таймеров
-    function chColor(cell) 
+	function chColor(cell) 
 	{
-      cell.classList.toggle('active');
-    }
-
-	function saveSetTimers() 
-	{
-		const cells = document.querySelectorAll('.celF');
-		const colorsArray = [];
-		var timer = [];
+		var currentColor = window.getComputedStyle(cell).getPropertyValue("background-color");	//Получаем текущий цвет фона ячейки
+		var ax = cell.parentNode.rowIndex; 									//Получаем индекс строки
+		var bx = cell.cellIndex; 											//Получаем индекс столбца
+		var cx = (ax * cell.parentNode.cells.length) + bx; 					//Вычисляем номер ячейки
+		var del = selCell.indexOf(cx);										//Ищем индекс ячейки в массиве selCell
 		
-		for (var i = 0; i < cells.length; i++) 
-		{
-			const color = window.getComputedStyle(cells[i]).getPropertyValue('background-color');
-			const matches = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-
-			if (matches) 
-			{
-				const colorNumbers = matches.slice(1).join('.');
-				colorsArray[i] = colorNumbers;
-				if (colorNumbers !== "255.255.255") timer[i] |= (1 << 7); //Устанавливаем седьмой бит в 1 - ячейка выделена
-				else  timer[i] &= ~(1 << 7); 								//Сбрасываем седьмой бит в 0 - ячейка не выделена
+		if (timer[0] & (1 << 11)) {											//Если бит 11 установлен, то таймер с учетом температуры
+			if (currentColor === "rgb(255, 140, 0)") {						//Определяем, в каком состоянии находится ячейка
+				cell.style.backgroundColor = "rgb(108, 0, 0)"; 				//Если текущий цвет желтый, меняем на красный
+				cell.style.color = '#C0C0C0';
+				if (del != -1) selCell.splice(del, 1);						//Если ячейка найдена, удаляем ее индекс из массива
+				timer[cx] |= (1 << 9);										//Устанавливаем 9 бит в 1 - ячейка выделена в основном массиве
+			} else if (currentColor === "rgb(108, 0, 0)") {					//Если текущий цвет красный, меняем на цвет фона
+				cell.style.backgroundColor = "rgb(34, 36, 49)";
+				cell.style.color = '#8f9392';
+				if (del != -1) selCell.splice(del, 1);						//Если ячейка найдена, удаляем ее индекс из массива
+				timer[cx] &= ~(1 << 9);										//Сбрасываем 9 бит в 0 - ячейка не выделена в основном массиве
+			} else {
+				cell.style.backgroundColor = "rgb(255, 140, 0)";			//Если текущий цвет не желтый и не красный, меняем на желтый
+				cell.style.color = "rgb(34, 36, 49)";
+				var xt = (timer[cx] >> 0) & 0x1FF; 							//Считываем температуру с младших 9 бит
+				
+				document.getElementById("slidT").value = xt;				//Установка на ползунке температуры нажатой ячейки
+				document.getElementById("labTe").innerHTML = xt + "\xB0"; 	//Знак градуса '\xB0'
+				var pr = document.getElementById("prTemp");
+				pr.style.width = 0;
+				var x = (xt-10)/(100-10)*100;
+				pr.style.width = x + "%";
+				selCell.push(cx);
+			}
+			if (selCell.length === 0) document.getElementById("dvTrTem").style.display = "none";//Скрываем Div трэкбара если массив индексов выделения пустой
+			else document.getElementById("dvTrTem").style.display = "block"; 					//Иначе показываем Div трэкбара
+		}
+		else {																//Если бит 12 сброшен, то просто таймер
+			if (currentColor === "rgb(108, 0, 0)") {						//Если текущий цвет красный, меняем на цвет фона
+				cell.style.backgroundColor = "rgb(34, 36, 49)";
+				cell.style.color = '#8f9392';
+				if (del != -1) selCell.splice(del, 1);						//Если ячейка найдена, удаляем ее индекс из массива
+				timer[cx] &= ~(1 << 9);										//Сбрасываем 9 бит в 0 - ячейка не выделена в основном массиве
+			}else{
+				cell.style.backgroundColor = "rgb(108, 0, 0)"; 				//Если текущий цвет фона, меняем на красный
+				cell.style.color = '#C0C0C0';
+				if (del != -1) selCell.splice(del, 1);						//Если ячейка найдена, удаляем ее индекс из массива
+				timer[cx] |= (1 << 9);										//Устанавливаем 9 бит в 1 - ячейка выделена в основном массиве
 			}
 		}
-
-		// Log the colors array
-		//timer[0] |= ((255 << 8) & 0xFF00); 								//Запись числа в старший байт не трогая младший
-		timer[0] |= (100 & 0x7F);
-		var setTempApp = (timer[0] >> 0) & 0x7F;
-		console.log(colorsArray);
-		console.log(timer);
-		console.log(setTempApp);
-    }
-	
-	//Функция обработки кнопок выделения времени в таблице таймеров
-	function reset() {
-		const cells = document.querySelectorAll('.celF');
-
-		cells.forEach(cell => {
-		  cell.classList.remove('active');
-		});
 	}
 	
-	//Функция переключателей кнопок времени в таблице таймеров
-	function btHouClick(inbt) {
-		timDisp(inbt);
-		const buttons = document.querySelectorAll('.btHou');
-			buttons.forEach((button, i) => {						//Сбросить состояние всех кнопок
-			button.classList.remove('dtHouAct');
+	//Функция обработки трекбара установки TEMPERATURE
+	function SetSlidT(t) 
+	{
+		document.getElementById("labTe").innerHTML = t + "\xB0"; 				//Знак градуса '\xB0'
+		var pr = document.getElementById("prTemp");
+		var z = (t-10)/(100-10)*100;
+		pr.style.width = z + "%";
+		
+		selCell.forEach(function(x) {											//Функция типа цикла пробегается по всем индексам массива selCell
+		var txt = document.getElementById("tn"+x).innerHTML;					//Вытаскиваем весь текст из ячейки
+		var s = txt.substring(0, 5);											//Отделяем время от температуры
+			document.getElementById("tn"+x).innerHTML = s + " " + t + "\xB0"; 	//Изменяем температуру во всех выделеных желтым цветом ячейках
 		});
-		buttons[inbt].classList.add('dtHouAct');					//Установить активное состояние для нажатой кнопки
 	}
 	
 	//Функция переключателей дней недели в таблице таймеров
-	function btWeekClick(inbt) {
+	function btWeekClick(dn) {
 		
 		const buttons = document.querySelectorAll('.btWeek');
 			buttons.forEach((button, i) => {						//Сбросить состояние всех кнопок
 			button.classList.remove('btWeekAct');
 		});
-		buttons[inbt].classList.add('btWeekAct');					//Установить активное состояние для нажатой кнопки
+		buttons[dn].classList.add('btWeekAct');					//Установить активное состояние для нажатой кнопки
+		d_ned = dn;
 	}
 	
 	//Функция нажатия кнопки Таймер или Таймер с температурой
 	function btTiTemp() {
-      const button = document.getElementById('btTiTe');
-      button.classList.toggle('active');
-
-      if (button.classList.contains('active')) {
-        button.innerHTML = 'TIMER & TEMP';
-      } else {
-        button.innerHTML = 'TIMER';
-      }
+		var element = document.getElementById("btTiTe")
+		if (element.classList.contains("tinoT")) 
+		{
+			document.getElementById("btTiTe").className = "tiTem";
+			//document.getElementById("txHaAu").innerHTML = "HAND MODE";
+			for (var i = 0; i < 96; i++) {
+				timer[i] |= (1 << 11);								//Устанавливаем 11 бит в 1 - Таймер с температурой
+			}
+		}
+		else 
+		{
+			document.getElementById("btTiTe").className = "tinoT";
+			//document.getElementById("txHaAu").innerHTML = "AUTO MODE";
+			document.getElementById("dvTrTem").style.display = "none";   //Скрываеем Div трэкбара установка температуры
+			for (var i = 0; i < 96; i++) {
+				timer[i] &= ~(1 << 11); 								//Сбрасываем 11 бит в 0 - Только таймер
+			}
+			
+		}
+		timDisp();
+		btDeSele();
     }
 	
 	//Функция переключателей кнопок COLD - HEAT ХОЛОД-ТЕПЛО
 	function btColHea() {
-      const button = document.getElementById('btCoHe');
-      button.classList.toggle('active');
-
-      if (button.classList.contains('active')) {
-        document.getElementById("btSetT").className = "tmpCo";
-		button.innerHTML = 'HEAT MODE';
-      } else {
-        button.innerHTML = 'COLD MODE';
-		document.getElementById("btSetT").className = "tmpHe";
-      }
+		var element = document.getElementById("btCoHe")
+		if (element.classList.contains("tmpCo")) 
+		{
+			document.getElementById("btCoHe").className = "tmpHe";
+			//document.getElementById("txHaAu").innerHTML = "HAND MODE";
+			for (var i = 0; i < 96; i++) {
+				timer[i] |= (1 << 12);								//Устанавливаем 12 бит в 1 - Режим ТЕПЛО
+			}
+		}
+		else 
+		{
+			document.getElementById("btCoHe").className = "tmpCo";
+			//document.getElementById("txHaAu").innerHTML = "AUTO MODE";
+			for (var i = 0; i < 96; i++) {
+				timer[i] &= ~(1 << 12); 								//Сбрасываем 12 бит в 0 - Режим ХОЛОД
+			}
+		}
     }
+	
+	//Функция снять выделение всех ячеек в таблице таймеров
+	function btDeSele() {
+		var cells = document.querySelectorAll("#table td");
+		cells.forEach(function(cell) {
+			cell.style.backgroundColor = "#222431"; // Устанавливаем цвет фона для всех ячеек
+			cell.style.color = "#8f9392";			// Устанавливаем цвет текста для всех ячеек
+		});
+		selCell.length = 0;											//Очищаем весь масив индексов выделеных ячеек
+		for (var i = 0; i < 96; i++) {
+			timer[i] &= ~(1 << 9);									//Очищаем все биты 9 - Нет выделленых ячеек таймеров
+		}
+		document.getElementById("dvTrTem").style.display = "none"; 	//Скрываем Div трэкбара установка температуры							
+	}
+	
+	//Функция переключения СУТОЧНЫЙ /НЕДЕЛЬНЫЙ таймер
+	function btSutNed() {
+		var element = document.getElementById("btSuNe")
+		if (element.classList.contains("sutTi")) 
+		{
+			document.getElementById("btSuNe").className = "nedTi";
+			document.getElementById("btTim").className = "tined";
+			document.getElementById("lbTim").innerHTML = "SETTING THE WEEKLY TIMER";
+			document.getElementById("dvDnNd").style.display = "block";  //Показываем Div кнопок дни недели
+			for (var i = 0; i < 96; i++) {
+				timer[i] |= (1 << 13);									//Устанавливаем 13 бит в 1 - НЕДЕЛЬНЫЙ Таймер
+			}
+		}
+		else 
+		{
+			document.getElementById("btSuNe").className = "sutTi";
+			document.getElementById("btTim").className = "tisut";
+			document.getElementById("lbTim").innerHTML = "SETTING THE DAY TIMER";
+			document.getElementById("dvDnNd").style.display = "none";  	//Скрываем Div кнопок дни недели
+			for (var i = 0; i < 96; i++) {
+				timer[i] &= ~(1 << 13); 								//Сбрасываем 13 бит в 0 - СУТОЧНЫЙ Таймер
+			}
+		}
+	}	
+	
+	function saveSetTimers() 
+	{
+		selCell.forEach(function(x) {											//Функция типа цикла пробегается по всем индексам массива selCell
+			document.getElementById("tn"+x).style.backgroundColor = "#6C0000"   //Устанавливаем в выделеных ячейках темно красный цвет вместо желтых
+			document.getElementById("tn"+x).style.color = "#C0C0C0"   			//Устанавливаем в выделеных ячейках светлосерый цвет текста
+		});
+		document.getElementById("dvTrTem").style.display = "none"; 				//Скрываем Div трэкбара установка температуры
+		
+		jeso = {};
+		for (var i = 0; i < timer.length; i++) {								//Формирование строки JSON
+			var key = i.toString(); 											//Преобразуем индекс в строку
+			jeso[key] = timer[i]; 												//Добавляем элемент в объект JSON
+		}
+		var jsonString = JSON.stringify(jeso);									//Преобразуем объект JSON в строку
+		
+		var k = '{'
+		+ '"comm":'
+		+ '"SET"'
+		+ ","
+		+ '"day":'
+		+ '"' + d_ned + '"'
+		+ ","
+		
+		var outPaket = jsonString.replace("{", k);								//Вставляем в пакет комманду и день недели
+		
+		sendBLE(outPaket);
+		
+		
+		/*
+		const cells = document.querySelectorAll('.celT');
+		const colorsArray = [];
+		
+		for (var i = 0; i < cells.length; i++) 
+		{
+			const color = window.getComputedStyle(cells[i]).getPropertyValue('background-color');
+			const matches = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/)		//Записываем температуру в основной массив
+			if (matches) 
+			{
+				const colorNumbers = matches.slice(1).join('.');
+				colorsArray[i] = colorNumbers;
+				if (colorNumbers !== "255.255.255") timer[i] |= (1 << 7); 		//Устанавливаем седьмой бит в 1 - ячейка выделена
+				else  timer[i] &= ~(1 << 7); 									//Сбрасываем седьмой бит в 0 - ячейка не выделена
+			}
+		}
+		*/
+		//timer[0] |= ((255 << 8) & 0xFF00); 									//Запись числа в старший байт не трогая младший
+		console.log(outPaket);
+    }
+	
+	//Функция отправки пакета по блютуз
+	function sendBLE(pak) 
+	{
+		var maxLen = 20;														//Разбиваем строку jsonString на подстроки длиной не более 20 символов
+		for (var i = 0; i < pak.length; i += maxLen) {
+			var m = pak.substr.substr(i, maxLen);
+			writeBt(m);
+			setTimeout(function() {
+				console.log('Итерация', i);
+			}, 500);
+		}
+	}
 	
 	//Кнопка обновить время
 	function updTim() 
 	{
+		mqtt.disconnect();
 		var tz;
 		var date = new Date();
 		var ofs = new Date().getTimezoneOffset();
@@ -666,8 +835,9 @@
 		+ '"tz":'
 		+ '"'+ tz + '"'
 		+ '}';
-		ouData(jeso);
-		document.getElementById("ltim").style.color = '#8f9392'; //Светло серый цвет
+		//sendData(jeso);
+		sendBLE(jeso);
+		//document.getElementById("ltim").style.color = '#8f9392'; //Светло серый цвет
 		updTm = 3;
 		//console.log(jeso);
 	}
@@ -676,10 +846,10 @@
 	function StorWrite() 
 	{
 		localStorage.clear();
-		localStorage.setItem('bm','m15.cloudmqtt.com');
-		localStorage.setItem('us','cxjuzzzn');
-		localStorage.setItem('ps','Jevkda5wZkhl');
-		localStorage.setItem('po','32669');
+		localStorage.setItem('bm','=========');
+		localStorage.setItem('us','=========');
+		localStorage.setItem('ps','=========');
+		localStorage.setItem('po','=========');
 	}
 	
 	//Функция чтения значений хранилища из смартфона или компа
@@ -713,6 +883,7 @@
         .then(device => {
             device.addEventListener('gattservicedisconnected', onDisconnected);
 			document.getElementById("conBle").className = "bleOn";
+			flg_Conn = 1; 														//Зеленый цвет светодиода мигающий в таймере LINK BLE 
             return device.gatt.connect();
         })
         .then(gattServer =>{
@@ -736,30 +907,47 @@
 	
 
     function onDisconnected(event){
-         document.getElementById("conBle").className = "bleOf";
+        document.getElementById("conBle").className = "bleOf";
+		flg_Conn = 0; 															//Красный цвет светодиода мигающий в таймере LINK BLE 
     }
 
     function handleCharact(event){
     const jsonPac = new TextDecoder().decode(event.target.value);
     var jsonRes = JSON.parse(jsonPac);
-    console.log(jsonRes);
-    
     var jsonString = JSON.stringify(jsonRes); // Преобразование объекта JSON в строку
     
-    var x1 = jsonString.indexOf('"');
-    var x2 = jsonString.indexOf('"', x1 + 1);
+	if (Flag_Read == 0) {
+      var index = jsonString.indexOf("{");
+      if (index !== -1) {
+        Flag_Read = 1;
+      }
+    }
+	
+	if (Flag_Read == 1) {
+      readData += jsonString;
+      var index = jsonString.indexOf("}");
+      if (index != -1) {
+        Flag_Read = 0;
+		parsePaket(readData);
+		console.log(readData); 
+        readData = "";
+      }
+    } 
+	
+    //var x1 = jsonString.indexOf('"');
+    //var x2 = jsonString.indexOf('"', x1 + 1);
 
-		if (x1 !== -1 && x2 !== -1) {
-			var tou = jsonString.substring(x1 + 1, x2);
-			var k = tou;
-			timer[k] = jsonRes[k];
-		} 
-		console.log(k); 
+	//	if (x1 !== -1 && x2 !== -1) {
+	//		var tou = jsonString.substring(x1 + 1, x2);
+	//		var k = tou;
+	//		timer[k] = jsonRes[k];
+	//	} 
+		
 	}
 
-    function writeOnCharacteristic() {
-		jeso = '{"comm":"SWF","ssid":"ghj","pasr":"fgt"}';
-		const data = new TextEncoder().encode(jeso);
+    function writeBt(pak) {
+		//jeso = '{"comm":"SWF","ssid":"ghj","pasr":"fgt"}';
+		const data = new TextEncoder().encode(pak);
 
 		if (bleServer && bleServer.connected) {
 			bleServiceFound.getCharacteristic(jsonCharact)
