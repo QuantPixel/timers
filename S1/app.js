@@ -141,7 +141,7 @@
               document.getElementById("temp").innerHTML = y;
 			  progressCircle.style.setProperty('--percent', Number(y)); 
         }else {
-              document.getElementById("temp").innerHTML = "--";
+              document.getElementById("temp").innerHTML = "Error";
 			  progressCircle.style.setProperty('--percent', 0); 
         }
 		
