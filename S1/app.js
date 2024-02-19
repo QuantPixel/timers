@@ -30,6 +30,7 @@
     var bleService = '70b768c5-9033-48b0-abb0-cbeee7d466ad';
     var jsonCharact = 'd1135308-a467-48a5-8e5f-47ef971f519d';
 	var mqtt;
+	const progressCircle = document.querySelector('.prog circle:last-of-type');
 	
 	window.addEventListener('load', onLoad);
 	
@@ -44,6 +45,7 @@
 		//btHouClick(t_hou); //Устанавливаем кнопку переключателей на 00 часов
 		timDisp();
 		//conGlobal();
+		progressCircle.style.setProperty('--percent', 0); 
 		for (var i = 0; i < 96; i++) {
 			timer[i] = Math.floor(Math.random() * 101);								//Температуру во все ячейки
 		}
@@ -131,7 +133,6 @@
 		var y;
 		var z;
 		var w;
-		const progressCircle = document.querySelector('.prog circle:last-of-type');
 		
 		var jsonResponse = JSON.parse(paket);
 		
