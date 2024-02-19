@@ -908,7 +908,6 @@
 	
 
     function onDisconnected(event){
-        document.getElementById("conBle").className = "bleOf";
 		flg_Conn = 0; 															//Красный цвет светодиода мигающий в таймере LINK BLE 
     }
 
@@ -979,7 +978,7 @@
                     .then(() => {
                         console.log("Device Disconnected");
                         document.getElementById("conBle").className = "bleOf";
-
+						flg_Conn = 0; 
                     })
                     .catch(error => {
                         console.log("An error occurred:", error);
