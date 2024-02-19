@@ -914,19 +914,19 @@
 
     function handleCharact(event){
     const jsonPac = new TextDecoder().decode(event.target.value);
-    var jsonRes = JSON.parse(jsonPac);
-    var jsonString = JSON.stringify(jsonRes); // Преобразование объекта JSON в строку
+    //var jsonRes = JSON.parse(jsonPac);
+    //var jsonString = JSON.stringify(jsonPac); // Преобразование объекта JSON в строку
     
 	if (Flag_Read == 0) {
-      var index = jsonString.indexOf("{");
+      var index = jsonPac.indexOf("{");
       if (index !== -1) {
         Flag_Read = 1;
       }
     }
 	
 	if (Flag_Read == 1) {
-      readData += jsonString;
-      var index = jsonString.indexOf("}");
+      readData += jsonPac;
+      var index = jsonPac.indexOf("}");
       if (index != -1) {
         Flag_Read = 0;
 		parsePaket(readData);
