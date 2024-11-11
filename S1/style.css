@@ -12,6 +12,14 @@ font-weight: normal;
 font-style: normal;
 }
 
+.navbar {
+    background-color: #494B57;
+    color: white;
+    padding: 15px;
+    display: flex;
+    gap: 10px;
+}
+
 ::-webkit-scrollbar { width: 0;} /*Убрать скрол бар */ 
 * {
 -webkit-box-sizing: border-box;
